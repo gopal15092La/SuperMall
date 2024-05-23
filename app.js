@@ -13,6 +13,7 @@ const expressValidator = require('express-validator');
 // const fileUpload = require('express-fileupload');
 
 //connect to db
+//kosish
 mongoose.connect(config.database);
 const db = mongoose.connection;
 db.on('error',console.error.bind(console, 'connections error:'));
