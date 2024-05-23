@@ -1,0 +1,105 @@
+<%- include('../_layouts/adminheader.ejs',{title: title ,slug: slug}) %>
+
+<!-- <h1>Hello There</h1> -->
+<style>
+    body{
+        margin: 0;
+    }
+    .addingPage{
+        padding-left: 70px;
+        padding-top: 20px;
+        padding-bottom: 100px;
+        display: grid;
+        margin-bottom: 20px;
+    }
+
+    .toPrevious {
+        background-color:rgb(222, 119, 222);
+        width: 150px; /* Adjust width as needed */
+        padding-top: 15px; /* Adjust padding as needed */
+        text-align: center;
+        margin-bottom: 20px;
+        /* border-radius: 33px; Adjust border radius as needed */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 30px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ccc;
+
+    }
+    .addingPage .toPrevious a {
+        text-decoration: none; /* Remove underline from the link */
+        color: white; /* Change link color */
+    }
+    .addingPage .toPrevious a:hover {
+        /* text-decoration: none;  */
+        color:blue; /* Change link color */
+    }
+    .ofForm .form-group{
+        display: grid;
+        margin-bottom: 15px;
+        padding-right: 70px;
+        font-weight: bold;
+    }
+    .ofForm .form-group ::placeholder{
+        margin-left: 10px;
+    }
+    .ofForm .form-group input{
+        height: 30px;
+    }
+    .ofForm .finalBtn{
+        border-radius: 20px;
+        height: 30px;
+        padding-left: 5px;
+        background-color: grey;
+        width: 80px;
+    }
+    .ofForm .finalBtn:hover{
+        background-color:magenta;
+        color: white ;
+    }
+
+</style>
+
+<div class="addingPage">
+    <div class="hh">
+        <h2 class="page-title">Add a page</h2>
+    </div>
+    <div class="toPrevious">
+        <a href="/admin/pages" >Back to all Pages</a>
+        <br><br>
+    </div>
+    <div class="ofForm">
+        <form action="/admin/pages/add-page" method="post" >
+
+            <div class="form-group">
+                <label for="">Title</label>
+                <input type="text" class="form-control" name="title" value="<%= title %>" placeholder="Title">
+            </div> 
+
+            <div class="form-group">
+                <label for="">slug</label>
+                <input type="text" class="form-control" name="slug" value="<%= slug %>" placeholder="slug">
+            </div>
+
+            <div class="form-group">
+                <label for="">Content</label>
+                <textarea name="content" class="form-control" id="ta" cols="30" rows="10" placeholder="Content"><%= content %></textarea>
+            </div>
+            <button class="finalBtn">Submit</button>
+
+        </form> 
+    </div>
+
+</div>
+<!-- <script>
+    ClassicEditor
+        .create( document.querySelector( '#ta' ) )
+        .catch( error => {
+            console.error( error );
+        } );
+</script> -->
+
+<br><br>    <hr>    <br><br>
+<%- include('../_layouts/adminfooter.ejs') %>

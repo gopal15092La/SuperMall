@@ -1,0 +1,104 @@
+<%- include('../_layouts/adminheader.ejs',{page: page, title: title ,slug: slug,content:content}) %>
+
+
+
+<!-- <h1>Hello There</h1> -->
+<style>
+    body{
+        margin: 0;
+    }
+    .addingPage{
+        padding-left: 70px;
+        padding-top: 20px;
+        padding-bottom: 100px;
+        display: grid;
+        margin-bottom: 20px;
+    }
+
+    .toPrevious {
+        background-color:rgb(222, 119, 222);
+        width: 150px; /* Adjust width as needed */
+        padding-top: 15px; /* Adjust padding as needed */
+        border-radius: 33px; /* Adjust border radius as needed */
+        text-align: center;
+        margin-bottom: 20px;
+
+    }
+    .addingPage .toPrevious a {
+        text-decoration: none; /* Remove underline from the link */
+        color: white; /* Change link color */
+    }
+    .addingPage .toPrevious a:hover {
+        /* text-decoration: none;  */
+        color:blue; /* Change link color */
+    }
+    .ofForm .form-group{
+        display: grid;
+        margin-bottom: 15px;
+        padding-right: 70px;
+        font-weight: bold;
+    }
+    .ofForm .form-group ::placeholder{
+        margin-left: 10px;
+    }
+    .ofForm .form-group input{
+        height: 30px;
+    }
+    .ofForm .finalBtn{
+        border-radius: 20px;
+        height: 30px;
+        padding-left: 5px;
+        background-color: grey;
+        width: 80px;
+    }
+    .ofForm .finalBtn:hover{
+        background-color:magenta;
+        color: white ;
+    }
+
+</style>
+
+<div class="addingPage">
+    <div class="hh">
+        <h2 class="page-title">Edit a page</h2>
+    </div>
+    <div class="toPrevious">
+        <a href="/admin/pages" >Back to all Pages</a>
+        <br><br>
+    </div>
+    <div class="ofForm">
+        <form action="/admin/pages/edit-page/<%= page.slug %>" method="post" >
+            <div class="form-group">
+                <label for="">Title</label>
+                <input type="text" class="form-control" name="title" value="<%= page.title %>" placeholder="Title">
+            </div> 
+
+            <div class="form-group">
+                <label for="">slug</label>
+                <input type="text" class="form-control" name="slug" value="<%= page.slug %>" placeholder="slug">
+            </div>
+
+            <div class="form-group">
+                <label for="">Content</label>
+                <textarea name="content" class="form-control"  id="ta" cols="30" rows="10" placeholder="Content"><%= page.content %></textarea>
+            </div>
+
+            <input type="hidden" name="id" value="<%= page._id %>" >
+            <button class="finalBtn">Submit</button>
+
+        </form> 
+    </div>
+
+</div>
+
+<!-- <script>
+    ClassicEditor
+        .create( document.querySelector( '#ta' ) )
+        .catch( error => {
+            console.error( error );
+        } );
+</script> -->
+<br><br>
+<hr>
+<br><br>
+<%- include('../_layouts/adminfooter.ejs') %>

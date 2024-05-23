@@ -1,0 +1,92 @@
+<%- include('../_layouts/adminheader.ejs',{title: title ,slug: slug}) %>
+
+<!-- <h1>Hello There</h1> -->
+<style>
+    body{
+        margin: 0;
+    }
+    .addingPage{
+        padding-left: 70px;
+        padding-top: 20px;
+        padding-bottom: 100px;
+        display: grid;
+        margin-bottom: 20px;
+    }
+    .addingPage .hh h2{
+        /* padding-left: 15px; */
+        /* margin-bottom: 30px; */
+        font-size: 40px;
+    }
+    .toPrevious {
+        background-color:rgb(222, 119, 222);
+        width: 150px; /* Adjust width as needed */
+        padding-top: 15px; /* Adjust padding as needed */
+        text-align: center;
+        margin-bottom: 20px;
+        /* border-radius: 33px; Adjust border radius as needed */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 30px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ccc;
+    }
+    .addingPage .toPrevious a {
+        text-decoration: none; /* Remove underline from the link */
+        color: white; /* Change link color */
+    }
+    .addingPage .toPrevious a:hover {
+        /* text-decoration: none;  */
+        color:blue; /* Change link color */
+    } 
+    .tt{
+        padding-left: 30px;
+        padding-right: 30px;
+        text-align: center;
+    }
+</style>
+
+<div class="addingPage">
+    <div class="hh">
+        <h2 class="page-title">Pages</h2>
+    </div>
+    <div class="toPrevious">
+        <a href="/admin/pages/add-page" >Add a new page</a>
+        <br><br>
+    </div>
+</div>
+<div class = "tt">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% pages.forEach((page)=> { %>
+                <tr >
+                    <td><%= page.title %></td>
+                    <td><a href="/admin/pages/edit-page/<%= page.slug %>">Edit</a></td>
+                    <% if(page.slug == "home") { %>
+                        <td></td>
+                    <% } else {%>
+                        <td><a class="confirmDeletion"href="/admin/pages/delete-page/<%= page.slug %>">Delete</a></td>
+                    <% } %>
+                </tr>
+            <% }) %> 
+        </tbody>
+    </table>
+</div>
+
+
+<!-- JQUERY UI CDN -->
+<!-- <script
+  src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+  integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+  crossorigin="anonymous"></script>
+<br><br> -->
+<hr>
+<br><br>
+<%- include('../_layouts/adminfooter.ejs') %>
