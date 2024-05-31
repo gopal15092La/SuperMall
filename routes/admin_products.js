@@ -6,20 +6,31 @@ const resizeImg = require('resize-img');
 
 // Get Product model
 const Product = require("../models/product");
+// Get Category model
+const Category = require("../models/category");
+//GET Product index
+router.get("/", (req, res) => {
+    // var count = Product.countDocuments((err, count) => {
+    //     if (err) {
+    //         console.error(err);
+    //     } else {
+    //         console.log('Number of products:', count);
+    //     }
+    // });
+    const count = Product.countDocuments()
+                    .then((count) => {
+                        console.log("recieved the count : ", count);
+                    })
+                    .catch((err) => {
+                        console.log("err : ", err);
+                    })
 
-//GET pages index
-router.get("/", async (req, res) => {
-    try {
-        const pages = await Page.find({}).sort({ sorting: 1 });
-        res.render("admin/pages", {
-            pages: pages,
-            title: "",
-            slug: "",
+    Product.find(function(erros, products){
+        res.render('admin/products',{
+            products : products,
+            count: count
         });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Server Error");
-    }
+    });
 });
 
 //GET add page

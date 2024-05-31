@@ -4,13 +4,9 @@ const mongoose = require('mongoose');
 const config = require('./config/database');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-
-const { body, validationResult } = require('express-validator');
 const expressValidator = require('express-validator');
-
-// const expressValidator = require('express-validator');// Older version
 // const flash = require('express-flash');
-// const fileUpload = require('express-fileupload');
+const fileUpload = require('express-fileupload');
 
 //connect to db
 //kosish
@@ -40,16 +36,14 @@ app.locals.errors = null;
 app.locals.success = null;
 
 //Express fileUpload middleware
-// app.use(fileUpload());
+app.use(fileUpload());
 
 
-//Body-Parser middleware
-//parse application/x-www-form-urlencoded
+//Body-Parser middleware      
 app.use(bodyParser.urlencoded({extended:false}));
+
 //parse application/json
 app.use(bodyParser.json());
-//use flash()
-// app.use(flash());
 
 //Express Session middleware
 app.use(session({
@@ -93,10 +87,10 @@ const adminPages = require('./routes/admin_pages.js');
 const adminCategories = require('./routes/admin_categories.js');
 const adminProducts = require('./routes/admin_products.js');
 
-app.use('/', pages);
 app.use('/admin/pages', adminPages);
 app.use('/admin/categories', adminCategories);
 app.use('/admin/products', adminProducts);
+app.use('/', pages);
 
 
 
