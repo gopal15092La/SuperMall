@@ -10,22 +10,6 @@ const Product = require("../models/product");
 const Category = require("../models/category");
 //GET Product index
 router.get("/", async(req, res) => {
-    // const count = Product.countDocuments()
-    //                 .then((count) => {
-    //                     console.log("recieved the count : ", count);
-    //                 })
-    //                 .catch((err) => {
-    //                     console.log("err : ", err);
-    //                 })
-
-    // Product.find()
-    //     .then((products) => {res.render('admin/products',{
-    //         products : products,
-    //         count: count
-    //     })})
-    //     .catch((err) => {
-    //         return console.log("error : ", err);
-    //     })
     try {
         let products = await Product.find();
         let count = products.length;
