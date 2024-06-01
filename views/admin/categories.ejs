@@ -52,7 +52,7 @@
         <h2 class="page-title">Categories</h2>
     </div>
     <div class="toPrevious">
-        <a href="/admin/categories/add-category" >Add a new Category</a>
+        <a target="_blank" href="/admin/categories/add-category" >Add a new Category</a>
         <br><br>
     </div>
 </div>
@@ -70,7 +70,7 @@
                 <!-- <%= cat %> -->
                 <tr >
                     <td><%= cat.title %></td>
-                    <td><a href="/admin/categories/edit-category/<%= cat._id %>">Edit</a></td>
+                    <td><a target="_blank" href="/admin/categories/edit-category/<%= cat._id %>">Edit</a></td>
                     <td><a class="confirmDeletion"href="/admin/categories/delete-category/<%= cat._id %>">Delete</a></td>
                 </tr>
             <% }) %> 

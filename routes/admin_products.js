@@ -10,13 +10,6 @@ const Product = require("../models/product");
 const Category = require("../models/category");
 //GET Product index
 router.get("/", (req, res) => {
-    // var count = Product.countDocuments((err, count) => {
-    //     if (err) {
-    //         console.error(err);
-    //     } else {
-    //         console.log('Number of products:', count);
-    //     }
-    // });
     const count = Product.countDocuments()
                     .then((count) => {
                         console.log("recieved the count : ", count);
@@ -25,24 +18,34 @@ router.get("/", (req, res) => {
                         console.log("err : ", err);
                     })
 
-    Product.find(function(erros, products){
-        res.render('admin/products',{
+    Product.find()
+        .then((products) => {res.render('admin/products',{
             products : products,
             count: count
-        });
-    });
+        })})
+        .catch((err) => {
+            return console.log("error : ", err);
+        })
 });
 
-//GET add page
-router.get("/add-page", (req, res) => {
+//GET add product
+router.get("/add-product", (req, res) => {
     var title = "";
-    var slug = ""; // Define slug here
-    var content = "";
-    res.render("admin/add_page", {
-        title: title,
-        slug: slug, // Pass the slug variable here
-        content: content,
-    });
+    var desc = "";
+    var price = "";
+    Category.find()
+        .then((categories) => {
+            res.render("admin/add_product", {
+                title: title,
+                desc: desc,
+                categories: categories,
+                price: price,
+            });
+        })
+        .catch((err) => {
+            return console.log("error : ", err);
+        })
+    
 });
 
 //POST add page
