@@ -23,22 +23,20 @@ router.get("/", async(req, res) => {
 });
 
 //GET add product
-router.get("/add-product", (req, res) => {
+router.get("/add-product", async(req, res) => {
     var title = "";
     var desc = "";
     var price = "";
-    Category.find()
-        .then((categories) => {
-            res.render("admin/add_product", {
-                title: title,
-                desc: desc,
-                categories: categories,
-                price: price,
-            });
-        })
-        .catch((err) => {
-            return console.log("error : ", err);
-        })
+    var categories = await Category.find();
+    if(!categories) {
+        return console.log("error : ", categories);
+    }
+    res.render('admin/add_product', {
+        title : title,
+        desc : desc,
+        categories : categories,
+        price: price,
+    });
     
 });
 
