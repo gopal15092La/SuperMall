@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const mkdirp = require('mkdirp');
+const  { mkdirp } = require('mkdirp');
 const fs = require('fs-extra');
 const resizeImg = require('resize-img');
 
@@ -8,12 +8,13 @@ const resizeImg = require('resize-img');
 const Product = require("../models/product");
 // Get Category model
 const Category = require("../models/category");
+
 //GET Product index
 router.get("/", async(req, res) => {
     try {
         let products = await Product.find();
         let count = products.length;
-        return res.render('admin/products',{
+        res.render('admin/products',{
                     products : products,
                     count: count
                 });
@@ -40,68 +41,105 @@ router.get("/add-product", async(req, res) => {
     
 });
 
-//POST add page
-router.post("/add-page", (req, res) => {
-    console.log("yes recived***********");
+//POST add product
+router.post("/add-product", async (req, res) => {
+    // console.log("yes recived***********");
+    console.log(req.body);
 
+    var imageFile = req.files && req.files.image ? req.files.image.name : "";
+
+    // req.checkBody("desc", "Description must have a value.").notEmpty();
     req.checkBody("title", "title must have a value.").notEmpty();
-    req.checkBody("content", "content must have a value.").notEmpty();
+    req.checkBody("price", "Price must have a value.").isDecimal();
+    req.checkBody('image', 'You must upload an image').isImage(imageFile);
 
-    var title = req.body["title"];
-    var slug = req.body["slug"].replace(/\s+/g, "-").toLowerCase();
-    if (slug == "") slug = title.replace(/\s+/g, "-").toLowerCase();
-    var content = req.body["content"];
 
     var errors = req.validationErrors();
+
+    var title = req.body["title"];
+    var slug = title.replace(/\s+/g, "-").toLowerCase();
+    var desc = req.body["desc"];
+    var price = req.body["price"];
+    var category = req.body["Category"];
+    // var category = req.params.Category;
+
+    console.log("imageFile : ", imageFile);
+    console.log("desc : ", desc);
+    
     req.app.locals.success = null;
-    // if(errors){
 
     if (errors) {
         console.log("error is : " + errors);
 
-        res.render("admin/add_page", {
+        var categories = await Category.find();
+        res.render('admin/add_product', {
             errors: errors,
-            title: title,
-            slug: slug, // Pass the slug variable here
-            content: content,
+            title : title,
+            desc : desc,
+            categories : categories,
+            price: price,
         });
     } else {
-        Page.findOne({ slug: slug })
-            .then((page) => {
-                if (page) {
-                    console.log("Slug already exists: Choose another slug");
-                    // res.redirect('/admin/pages/add-page');
-                    res.render("admin/add_page", {
-                        errors: [{ msg: "Slug already exists: Choose another slug" }],
-                        title: title,
-                        slug: slug,
-                        content: content,
-                    });
-                } else {
-                    var page = new Page({
-                        title: title,
-                        slug: slug,
-                        content: content,
-                        sorting: 100,
-                    });
+        try {
+            var existingProduct = await Product.findOne({ slug: slug });
+            if (existingProduct) {
+                console.log("Product with this title already exists: Choose another title");
+        
+                var categories = await Category.find();
+                return res.render('admin/add_product', {
+                    errors: [{ msg: "Product title already exists. Choose another title." }],
+                    title: title,
+                    desc: desc,
+                    categories: categories,
+                    price: price,
+                });
+            } else {
+                var price2 = parseFloat(price).toFixed(2);
+                var newProduct = new Product({
+                    title: title,
+                    slug: slug,
+                    desc: desc,
+                    category: category,
+                    price: price2,
+                    image: imageFile,
+                });
+        
+                try {
+                    await newProduct.save();
+                    console.log("Product successfully saved!");
+        
+                    await mkdirp('public/product_images/' + newProduct._id);
+                    // console.log("Directory created successfully");
 
-                    page
-                        .save()
-                        .then(() => {
-                            console.log("Successfully saved!");
-                            req.app.locals.success = "Page saved successfully!";
-                            res.redirect("/admin/pages");
-                        })
-                        .catch((err) => {
-                            console.log("Error: Failed to save page!");
-                            res.redirect("/admin/pages/add-page");
-                        });
+                    await mkdirp('public/product_images/' + newProduct._id + '/gallery');
+                    // console.log("Gallery directory created successfully");
+
+                    await mkdirp('public/product_images/' + newProduct._id + '/gallery/thumbs');
+                    // console.log("Thumbs directory created successfully");
+                    
+                    if(imageFile != ""){
+                        var productImage = req.files.image;
+                        var path = 'public/product_image/' + newProduct._id + '/' + imageFile;
+
+                        try {
+                            await productImage.mv(path);
+                        }
+                        catch(err){
+                            return console.log("mv error : ", err);
+                        }
+                    }
+
+                    return res.redirect("/admin/products");
+                } catch (err) {
+                    console.error("Error:", err);
+                    return res.redirect("/admin/products/add-product");
                 }
-            })
-            .catch((err) => {
-                console.log("Error:", err);
-                res.redirect("/admin/pages/add-page");
-            });
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            return res.redirect("/admin/products/add");
+        }
+        
     }
 });
 

@@ -35,6 +35,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.locals.errors = null;
 app.locals.success = null;
 
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
 //Express fileUpload middleware
 app.use(fileUpload());
 
@@ -69,6 +72,23 @@ app.use(expressValidator({
         msg : msg,
         value : value
     };
+  },
+  customValidators: {
+    isImage: function(value, filename) {
+      var extension = (path.extname(filename)).toLowerCase();
+      switch(extension) {
+        case '.jpg':
+            return '.jpg';
+        case '.jpeg':
+            return '.jpeg';
+        case '.png':
+            return '.png';
+        case '':
+            return '.jpg';
+        default:
+            return false;
+      }
+    }
   }
 }));
 // Middleware to parse JSON bodies (as sent by API clients)

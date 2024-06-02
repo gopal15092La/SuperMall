@@ -13,11 +13,10 @@ const ProductSchema = mongoose.Schema({
     },
     desc: {
         type: String,
-        required: true
+        // required: true
     },
     category: {
         type: String,
-        required: true
     },
     price: {
         type: Number,
@@ -25,7 +24,6 @@ const ProductSchema = mongoose.Schema({
     },
     image: {
         type: String,
-        required: true
     }
 });
 // view-source:getbootstrap.com/examples/starter-template/

@@ -73,14 +73,14 @@
         <tbody>
             <% products.forEach((product)=> { %>
                 <tr >
-                    <td><%= products.title %></td>
+                    <td><%= product.title %></td>
                     <td>$<%= parseFloat(product.price).toFixed(2) %></td>
                     <td><%= product.category %></td>
                     <td>
                         <% if(product.image == "") { %> 
-                            <img src="/images/noimage.png" alt="">
+                            <img src="/images/NoImg.jpg" alt="img_not_found" style="height: 100px; width: 100px;">
                         <% } else { %>
-                            <img src="/product_images/<%= product._id %>/<%= product.image %>" alt="">
+                            <img src="/product_images/<%= product._id %>/<%= product.image %>" alt="img_not_found">
                         <% } %>
                     </td>
                     <td><a href="/admin/products/edit-product/<%= product._id %>"> Edit </a></td>
