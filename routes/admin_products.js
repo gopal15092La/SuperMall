@@ -3,7 +3,8 @@ const router = express.Router();
 const  { mkdirp } = require('mkdirp');
 const fs = require('fs-extra');
 const resizeImg = require('resize-img');
-
+const fileUpload = require('express-fileupload');
+// app.use(fileUpload());
 // Get Product model
 const Product = require("../models/product");
 // Get Category model
@@ -43,41 +44,37 @@ router.get("/add-product", async(req, res) => {
 
 //POST add product
 router.post("/add-product", async (req, res) => {
-    // console.log("yes recived***********");
     console.log(req.body);
 
-    var imageFile = req.files && req.files.image ? req.files.image.name : "";
+    var imageFile = (req.files && req.files.image) ? req.files.image.name : "";
+    console.log("imageFile : ", imageFile);
 
-    // req.checkBody("desc", "Description must have a value.").notEmpty();
     req.checkBody("title", "title must have a value.").notEmpty();
     req.checkBody("price", "Price must have a value.").isDecimal();
     req.checkBody('image', 'You must upload an image').isImage(imageFile);
-
-
+    res.send("hi gopal");
     var errors = req.validationErrors();
 
     var title = req.body["title"];
     var slug = title.replace(/\s+/g, "-").toLowerCase();
     var desc = req.body["desc"];
+        desc = stripHtmlTags(desc);
     var price = req.body["price"];
     var category = req.body["Category"];
-    // var category = req.params.Category;
 
-    console.log("imageFile : ", imageFile);
-    console.log("desc : ", desc);
     
-    req.app.locals.success = null;
+    // console.log("desc : ", desc);
 
     if (errors) {
         console.log("error is : " + errors);
 
         var categories = await Category.find();
         res.render('admin/add_product', {
-            errors: errors,
             title : title,
             desc : desc,
             categories : categories,
-            price: price,
+            price: price, 
+            errors: errors,
         });
     } else {
         try {
@@ -109,29 +106,28 @@ router.post("/add-product", async (req, res) => {
                     console.log("Product successfully saved!");
         
                     await mkdirp('public/product_images/' + newProduct._id);
-                    // console.log("Directory created successfully");
-
                     await mkdirp('public/product_images/' + newProduct._id + '/gallery');
-                    // console.log("Gallery directory created successfully");
-
                     await mkdirp('public/product_images/' + newProduct._id + '/gallery/thumbs');
-                    // console.log("Thumbs directory created successfully");
-                    
+                    console.log("newProduct._id:", newProduct._id);
+                    console.log("imageFile:", imageFile);
                     if(imageFile != ""){
                         var productImage = req.files.image;
                         var path = 'public/product_image/' + newProduct._id + '/' + imageFile;
-
+                        console.log("path : ", path);
                         try {
+                            await fs.ensureDir(path.dirname(path));
                             await productImage.mv(path);
+                            console.log("Image file moved successfully");
                         }
                         catch(err){
-                            return console.log("mv error : ", err);
+                            return console.error("mv Error:", err);
+                            // return res.status(500).send("Error moving image file");
                         }
                     }
 
                     return res.redirect("/admin/products");
                 } catch (err) {
-                    console.error("Error:", err);
+                    // console.error("Error:", err);
                     return res.redirect("/admin/products/add-product");
                 }
             }
@@ -142,6 +138,9 @@ router.post("/add-product", async (req, res) => {
         
     }
 });
+function stripHtmlTags(str) {
+    return str.replace(/<[^>]*>?/gm, '');
+}
 
 //GET edit page
 router.get('/edit-page/:slug', async (req, res) => {
@@ -263,6 +262,7 @@ router.get('/delete-page/:slug', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
+
 
 
 

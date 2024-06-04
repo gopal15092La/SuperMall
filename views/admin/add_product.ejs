@@ -71,7 +71,7 @@
         <br><br>
     </div>
     <div class="ofForm">
-        <form action="/admin/products/add-product" method="post" anctype="multipart/form-data">
+        <form action="/admin/products/add-product" method="post" enctype="multipart/form-data">
 
             <div class="form-group">
                 <label for="">Title</label>
@@ -80,7 +80,7 @@
 
             <div class="form-group">
                 <label for="">Description</label>
-                <textarea name="content" class="form-control" id="ta" cols="30" rows="10" placeholder="Description"><%= desc %></textarea>
+                <textarea name="desc" class="form-control" id="ta" cols="30" rows="10" placeholder="Description"><%= desc %></textarea>
             </div>
 
             <div class="form-group">
