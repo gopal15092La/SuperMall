@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const  { mkdirp } = require('mkdirp');
+const path = require('path');
 const fs = require('fs-extra');
 const resizeImg = require('resize-img');
 const fileUpload = require('express-fileupload');
@@ -52,7 +53,7 @@ router.post("/add-product", async (req, res) => {
     req.checkBody("title", "title must have a value.").notEmpty();
     req.checkBody("price", "Price must have a value.").isDecimal();
     req.checkBody('image', 'You must upload an image').isImage(imageFile);
-    res.send("hi gopal");
+    // res.send("hi gopal");
     var errors = req.validationErrors();
 
     var title = req.body["title"];
@@ -64,10 +65,8 @@ router.post("/add-product", async (req, res) => {
 
     
     // console.log("desc : ", desc);
-
     if (errors) {
         console.log("error is : " + errors);
-
         var categories = await Category.find();
         res.render('admin/add_product', {
             title : title,
@@ -103,7 +102,7 @@ router.post("/add-product", async (req, res) => {
         
                 try {
                     await newProduct.save();
-                    console.log("Product successfully saved!");
+                    // console.log("Product successfully saved!");
         
                     await mkdirp('public/product_images/' + newProduct._id);
                     await mkdirp('public/product_images/' + newProduct._id + '/gallery');
@@ -112,22 +111,19 @@ router.post("/add-product", async (req, res) => {
                     console.log("imageFile:", imageFile);
                     if(imageFile != ""){
                         var productImage = req.files.image;
-                        var path = 'public/product_image/' + newProduct._id + '/' + imageFile;
+                        var uploadPath = 'public/product_images/' + newProduct._id + '/' + imageFile;
                         console.log("path : ", path);
                         try {
-                            await fs.ensureDir(path.dirname(path));
-                            await productImage.mv(path);
+                            await fs.ensureDir(path.dirname(uploadPath));
+                            await productImage.mv(uploadPath);
                             console.log("Image file moved successfully");
                         }
                         catch(err){
                             return console.error("mv Error:", err);
-                            // return res.status(500).send("Error moving image file");
                         }
                     }
-
                     return res.redirect("/admin/products");
                 } catch (err) {
-                    // console.error("Error:", err);
                     return res.redirect("/admin/products/add-product");
                 }
             }

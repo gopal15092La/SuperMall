@@ -80,7 +80,7 @@
                         <% if(product.image == "") { %> 
                             <img src="/images/NoImg.jpg" alt="img_not_found" style="height: 100px; width: 100px;">
                         <% } else { %>
-                            <img src="/product_images/<%= product._id %>/<%= product.image %>" alt="img_not_found">
+                            <img src="/product_images/<%= product._id %>/<%= product.image %>"style="height: 100px; width: 100px;" alt="img_not_found">
                         <% } %>
                     </td>
                     <td><a href="/admin/products/edit-product/<%= product._id %>"> Edit </a></td>
