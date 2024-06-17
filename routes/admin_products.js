@@ -139,24 +139,41 @@ function stripHtmlTags(str) {
 }
 
 //GET edit page
-router.get('/edit-page/:slug', async (req, res) => {
-    const title = req.params.title;
-    const slug = req.params.slug;
-    const content = req.params.content;
-    const id = req.params._id;
+router.get('/edit-product/:id', async (req, res) => {
+
+    var errors ; 
+    
+    if(req.session.errors)  errors = req.session.errors;
+    req.session.errors = null;
+
     try {
-        const page = await Page.findOne({slug: slug}); // Replace with your actual database call
-        if (!page) {
-            return res.status(404).send("Page not found");
+        var categories = await Category.findById(req.params.id);
+        if(!categories) {
+            console.log("error : ", categories);
+            res.redirect('/admin/products');
+        }else{
+            var galleryDir = 'public/product_images/' + categories._id + '/gallery';
+            var galleryImages = null;
+            
+            fs.readdir(galleryDir, (err, files) => {
+                if(err) {
+                    console.log(err);
+                }else{
+                    galleryImages = files;
+                    res.render('admin/edit_product', {
+                        title: path.title,
+                        errors: errors,
+                        desc: p.desc,
+                        categories: categories,
+                        category: p.category.replace(/\s+/g,'-').toLowerCase(),
+                        price: p.price,
+                        image: p.image,
+                        galleryImages: galleryImages 
+                    });
+                }
+            });
         }
 
-        res.render("admin/edit_page", {
-            page: page,
-            title: page.title,
-            slug: page.slug,
-            content: page.content,
-            id: page._id
-        });
     } catch (error) {
         console.error("Error fetching page:", error);
         res.status(500).send("Server error");
