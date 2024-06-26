@@ -45,10 +45,9 @@ router.get("/add-product", async(req, res) => {
 
 //POST add product
 router.post("/add-product", async (req, res) => {
-    console.log(req.body);
-
+    // console.log(req.body);
     var imageFile = (req.files && req.files.image) ? req.files.image.name : "";
-    console.log("imageFile : ", imageFile);
+    // console.log("imageFile : ", imageFile);
 
     req.checkBody("title", "title must have a value.").notEmpty();
     req.checkBody("price", "Price must have a value.").isDecimal();
@@ -138,21 +137,26 @@ function stripHtmlTags(str) {
     return str.replace(/<[^>]*>?/gm, '');
 }
 
-//GET edit page
+//GET edit product
 router.get('/edit-product/:id', async (req, res) => {
 
     var errors ; 
     
     if(req.session.errors)  errors = req.session.errors;
     req.session.errors = null;
-
+    var rcvd_id = req.params.id;
+    var categories = await Category.find();
+    if(!categories) {
+        return console.log("error : ", categories);
+    }
     try {
-        var categories = await Category.findById(req.params.id);
-        if(!categories) {
-            console.log("error : ", categories);
+        var p = await Product.findOne({_id : rcvd_id});
+        // console.log("p : ", p);
+        if(!p) {
+            console.log("error_p : ", p);
             res.redirect('/admin/products');
         }else{
-            var galleryDir = 'public/product_images/' + categories._id + '/gallery';
+            var galleryDir = 'public/product_images/' + p._id + '/gallery';
             var galleryImages = null;
             
             fs.readdir(galleryDir, (err, files) => {
@@ -160,15 +164,17 @@ router.get('/edit-product/:id', async (req, res) => {
                     console.log(err);
                 }else{
                     galleryImages = files;
+                    console.log("admin : title  : : ", p.title);
                     res.render('admin/edit_product', {
-                        title: path.title,
+                        title: p.title,
                         errors: errors,
                         desc: p.desc,
                         categories: categories,
                         category: p.category.replace(/\s+/g,'-').toLowerCase(),
                         price: p.price,
                         image: p.image,
-                        galleryImages: galleryImages 
+                        galleryImages: galleryImages ,
+                        id:rcvd_id,
                     });
                 }
             });
@@ -180,68 +186,58 @@ router.get('/edit-product/:id', async (req, res) => {
     }
 });
 
-//POST EDIT page
-router.post("/edit-page/:slug", (req, res) => {
-    console.log("yes recived***********");
-    console.log("Request body:", req.body);
-    req.checkBody("title", "title must have a value.").notEmpty();
-    req.checkBody("content", "content must have a value.").notEmpty();
+//POST edit product
+router.post("/edit-product/:id", async (req, res) => {
+    // console.log(req.body);
+    var imageFile = (req.files && req.files.image) ? req.files.image.name : "";
+    // console.log("imageFile : ", imageFile);
 
-    var title = req.body.title;
-    var content = req.body.content;
-    var id = req.body._id;
-    var slug = req.params.slug.replace(/\s+/g, "-").toLowerCase();
-    if (slug == "")    
-            slug = title.replace(/\s+/g, "-").toLowerCase();
+    req.checkBody("title", "title must have a value.").notEmpty();
+    req.checkBody("price", "Price must have a value.").isDecimal();
+    req.checkBody('image', 'You must upload an image').isImage(imageFile);
+
+    var title = req.body["title"];
+    var slug = title.replace(/\s+/g, "-").toLowerCase();
+    var desc = req.body["desc"];
+        desc = stripHtmlTags(desc);
+    var price = req.body["price"];
+    var pimage = req.body["pimage"];
+    var id = req.params.id;
 
     var errors = req.validationErrors();
-    req.app.locals.success = null;
+    if(errors){
+        req.session.errors = errors;
+        req.redirect('/admin/products/edit-product/' + id)
+    } else{
+        try{
+            var dupProduct = await Product.findOne({slug: slug, _id:{'$ne':id}});
+            
+            if(dupProduct){
+                red.redirect('admin/products/edit-product/'  + id);
+            }else{
+                try{ 
+                    let p = await Product.findById(id);
+                    p.title = slug;
+                    p.slug = slug;
+                    p.desc = desc;
+                    p.price = parseFloat(price).toFixed(2);
+                    p.category = category;
+                    // if(imageFile != "") p.image = imageFile;
 
-
-    console.log(`title : ${title} \n content: ${content} \n id: ${id} \n slug: ${slug}`);
-
-    if (errors) {
-        console.log("error is : " + errors);
-
-        res.render("admin/edit_page", {
-            errors: errors,
-            title: title,
-            slug: slug, // Pass the slug variable here
-            content: content,
-            id: id
-        });
-    } else {
-        Page.findOne({ slug: slug })
-            .then((page) => {
-                if (!page) {
-                    console.log("Error: Page not found!");
-                    req.app.locals.error = "Page not found!";
-                    res.redirect("/admin/pages/add-page");
-                    return;
+                    await p.save();
+                    res.redirect('/admin/products')
+                } catch(err){
+                    console.log("err retriving page : ", err);
+                    red.redirect('admin/products/edit-product/'  + id);
                 }
-                page.title = title;
-                page.slug = req.body.slug; // in the existing slug ; updaing it with new slug
-                page.content = content;
 
-                page.save()
-                    .then(() => {
-                        console.log("Successfully saved!");
-                        req.app.locals.success = "Page saved successfully!";
-                        res.redirect("/admin/pages");
-                    })
-                    .catch((err) => {
-                        console.log("Error: Failed to save page!", err);
-                        req.app.locals.error = "Failed to save page!";
-                        res.redirect("/admin/pages/edit-page/" + slug);
-                    });
-
-            })
-            .catch((err) => {
-                console.log("Error:", err);
-                req.app.locals.error = "Error finding page!";
-                res.redirect("/admin/pages/add-page");
-            });
+            }
+        } catch(err){
+            console.log("dupProduct Error: ", err);
+            red.redirect('admin/products/edit-product/'  + id);
+        }
     }
+
 });
 
 
