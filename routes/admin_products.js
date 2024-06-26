@@ -164,13 +164,12 @@ router.get('/edit-product/:id', async (req, res) => {
                     console.log(err);
                 }else{
                     galleryImages = files;
-                    console.log("admin : title  : : ", p.title);
                     res.render('admin/edit_product', {
                         title: p.title,
                         errors: errors,
                         desc: p.desc,
                         categories: categories,
-                        category: p.category.replace(/\s+/g,'-').toLowerCase(),
+                        category: p.category,
                         price: p.price,
                         image: p.image,
                         galleryImages: galleryImages ,
@@ -188,9 +187,7 @@ router.get('/edit-product/:id', async (req, res) => {
 
 //POST edit product
 router.post("/edit-product/:id", async (req, res) => {
-    // console.log(req.body);
     var imageFile = (req.files && req.files.image) ? req.files.image.name : "";
-    // console.log("imageFile : ", imageFile);
 
     req.checkBody("title", "title must have a value.").notEmpty();
     req.checkBody("price", "Price must have a value.").isDecimal();
@@ -198,22 +195,25 @@ router.post("/edit-product/:id", async (req, res) => {
 
     var title = req.body["title"];
     var slug = title.replace(/\s+/g, "-").toLowerCase();
-    var desc = req.body["desc"];
-        desc = stripHtmlTags(desc);
+    var desc = req.body["desc"];    desc = stripHtmlTags(desc);
     var price = req.body["price"];
-    var pimage = req.body["pimage"];
+    var category = req.body["Category"]; 
+
     var id = req.params.id;
 
     var errors = req.validationErrors();
+    
     if(errors){
         req.session.errors = errors;
-        req.redirect('/admin/products/edit-product/' + id)
+        res.redirect('/admin/products/edit-product/' + id)
     } else{
         try{
-            var dupProduct = await Product.findOne({slug: slug, _id:{'$ne':id}});
+            console.log("Slug rcvd :" , slug, "\nTitle rcvd :", title, "\ncategory :", category);
+            var dupProduct = await Product.findOne({slug: slug});
             
-            if(dupProduct){
-                red.redirect('admin/products/edit-product/'  + id);
+            if(dupProduct && dupProduct._id.toString() !== id){
+                console.log("Duplicate Slug Found !");
+                res.redirect('admin/products/edit-product/'  + id);
             }else{
                 try{ 
                     let p = await Product.findById(id);
@@ -223,18 +223,18 @@ router.post("/edit-product/:id", async (req, res) => {
                     p.price = parseFloat(price).toFixed(2);
                     p.category = category;
                     // if(imageFile != "") p.image = imageFile;
-
                     await p.save();
-                    res.redirect('/admin/products')
-                } catch(err){
+                    return res.redirect('/admin/products');
+                }
+                 catch(err){
                     console.log("err retriving page : ", err);
-                    red.redirect('admin/products/edit-product/'  + id);
+                    // return res.redirect('admin/products/edit-product/'  + id);
                 }
 
             }
         } catch(err){
             console.log("dupProduct Error: ", err);
-            red.redirect('admin/products/edit-product/'  + id);
+            res.redirect('admin/products/edit-product/'  + id);
         }
     }
 
