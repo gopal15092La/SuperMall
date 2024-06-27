@@ -137,6 +137,8 @@ function stripHtmlTags(str) {
     return str.replace(/<[^>]*>?/gm, '');
 }
 
+
+
 //GET edit product
 router.get('/edit-product/:id', async (req, res) => {
 
@@ -200,15 +202,13 @@ router.post("/edit-product/:id", async (req, res) => {
     var category = req.body["Category"]; 
 
     var id = req.params.id;
-
     var errors = req.validationErrors();
-    
+
     if(errors){
         req.session.errors = errors;
         res.redirect('/admin/products/edit-product/' + id)
     } else{
         try{
-            console.log("Slug rcvd :" , slug, "\nTitle rcvd :", title, "\ncategory :", category);
             var dupProduct = await Product.findOne({slug: slug});
             
             if(dupProduct && dupProduct._id.toString() !== id){
@@ -222,13 +222,12 @@ router.post("/edit-product/:id", async (req, res) => {
                     p.desc = desc;
                     p.price = parseFloat(price).toFixed(2);
                     p.category = category;
-                    // if(imageFile != "") p.image = imageFile;
+
                     await p.save();
                     return res.redirect('/admin/products');
                 }
                  catch(err){
                     console.log("err retriving page : ", err);
-                    // return res.redirect('admin/products/edit-product/'  + id);
                 }
 
             }
@@ -244,27 +243,20 @@ router.post("/edit-product/:id", async (req, res) => {
 
 
 //GET Delete Page
-router.get('/delete-page/:slug', async (req, res) => {
-    console.log("on delete section ....");
-
-    // Ensure the id is extracted correctly. Assuming it's sent in the request body.
-    const slug = req.params.slug;
-    console.log("**slug : " , slug);
-
-    if (!slug) {
+router.get('/delete-product/:id', async (req, res) => {
+    const id = req.params.id;
+    if (!id) {
         return res.status(400).send("Bad Request: Missing _id");
     }
-
     try {
-        const result = await Page.deleteOne({ slug: slug });
-
-        if (result.deletedCount === 1) {
-            console.log(`Page with slug: ${slug} was deleted.`);
-            // return res.status(200).send("Page successfully deleted");
-            res.redirect('/admin/pages/');
+        const result = await Product.deleteOne({ _id : id });
+        // if (result.deletedCount === 1) {
+        if(result.acknowledged){
+            console.log(`Product with id: ${id} was deleted.`);
+            res.redirect('/admin/products/');
         } else {
-            console.log(`Page with slug: ${slug} was not found.`);
-            return res.status(404).send("Page not found");
+            console.log(`Product with id: ${id} was not found.`);
+            return res.status(404).send("Product not found");
         }
     } catch (error) {
         console.error(error);
