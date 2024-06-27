@@ -35,6 +35,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.locals.errors = null;
 app.locals.success = null;
 
+//Global variable for Pages---
+app.locals.globalPages = null;
+const page = require("./models/page");
+async function setGlobalPages() {
+    try { 
+        app.locals.globalPages = await page.find();
+    } catch (err) {
+        console.error("Error fetching global pages: ", err);
+    }
+}
+setGlobalPages();
+
+
+
 // Serve static files from the "public" directory
 app.use(express.static('public'));
 

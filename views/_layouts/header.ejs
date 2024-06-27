@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= heading %></title>
-  <!-- <link rel="stylesheet" href="/css/style.css"> -->
   <style>
     body {
       margin: 0;
@@ -17,7 +16,6 @@
       padding: 11px;
     }
     .just-name{
-      /* font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
       font-family: cursive;
       font-size: 30px;
       margin-top: 11px;
@@ -28,33 +26,36 @@
     }
 
     .options ul li{
+      text-decoration: black;
       display: inline-block;
       margin-right: 10px;  
     }
+    .options ul li a {
+      text-decoration: none; 
+      font-weight: bold;
+      color: black; 
+   }
     .just-name:hover,.options li:hover {
-      /* te-color: lightgray; */ 
       color: white;
       cursor: pointer;
     }
 
-
-    /* Media Query for smaller screens */
     @media screen and (max-width: 600px) {
       .nav-bar {
-        flex-direction: column; /* Change flex direction to column */
-        align-items: center; /* Center align items */
+        flex-direction: column;
+        align-items: center; 
       }
 
       .just-name {
-        margin-top: 0; /* Adjust margin */
-        margin-bottom: 10px; /* Add margin bottom for spacing */
-        text-align: center; /* Center align text */
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: center; 
       }
 
       .options ul li {
-        display: block; /* Change display to block */
-        margin: 5px 0; /* Add margin for spacing */
-        text-align: center; /* Center align text */
+        display: block;
+        margin: 5px 0;
+        text-align: center;
       }
     }
   </style>
@@ -66,9 +67,15 @@
     </div>
     <div class="options">
       <ul>
-        <li>About</li>
-        <li>Home</li>
-        <li>Contact</li>
+        <% if(globalPages) {%>
+        <% globalPages.forEach(page => {%>
+            <% if(page.title === "Home"){ %>
+              <li><a href="/"><%= page.title %></a></li>
+            <%}else{%>
+              <li><a href="<%= page.title %>" ><%= page.title %></a></li>
+            <%}%>
+        <%}); %>
+        <% }%>
       </ul>
     </div>
   </nav>

@@ -19,6 +19,8 @@ router.get("/", async (req, res) => {
     }
 });
 
+
+
 //GET add page
 router.get("/add-page", (req, res) => {
     var title = "";
@@ -33,7 +35,6 @@ router.get("/add-page", (req, res) => {
 
 //POST add page
 router.post("/add-page", (req, res) => {
-    console.log("yes recived***********");
 
     req.checkBody("title", "title must have a value.").notEmpty();
     req.checkBody("content", "content must have a value.").notEmpty();
@@ -45,11 +46,9 @@ router.post("/add-page", (req, res) => {
 
     var errors = req.validationErrors();
     req.app.locals.success = null;
-    // if(errors){
 
     if (errors) {
         console.log("error is : " + errors);
-
         res.render("admin/add_page", {
             errors: errors,
             title: title,
@@ -61,7 +60,6 @@ router.post("/add-page", (req, res) => {
             .then((page) => {
                 if (page) {
                     console.log("Slug already exists: Choose another slug");
-                    // res.redirect('/admin/pages/add-page');
                     res.render("admin/add_page", {
                         errors: [{ msg: "Slug already exists: Choose another slug" }],
                         title: title,
@@ -96,6 +94,10 @@ router.post("/add-page", (req, res) => {
     }
 });
 
+
+
+
+
 //GET edit page
 router.get('/edit-page/:slug', async (req, res) => {
     const title = req.params.title;
@@ -123,8 +125,6 @@ router.get('/edit-page/:slug', async (req, res) => {
 
 //POST EDIT page
 router.post("/edit-page/:slug", (req, res) => {
-    console.log("yes recived***********");
-    console.log("Request body:", req.body);
     req.checkBody("title", "title must have a value.").notEmpty();
     req.checkBody("content", "content must have a value.").notEmpty();
 
@@ -137,13 +137,10 @@ router.post("/edit-page/:slug", (req, res) => {
 
     var errors = req.validationErrors();
     req.app.locals.success = null;
-
-
-    console.log(`title : ${title} \n content: ${content} \n id: ${id} \n slug: ${slug}`);
+    // console.log(`title : ${title} \n content: ${content} \n id: ${id} \n slug: ${slug}`);
 
     if (errors) {
         console.log("error is : " + errors);
-
         res.render("admin/edit_page", {
             errors: errors,
             title: title,
@@ -190,22 +187,17 @@ router.post("/edit-page/:slug", (req, res) => {
 
 //GET Delete Page
 router.get('/delete-page/:slug', async (req, res) => {
-    console.log("on delete section ....");
-
     // Ensure the id is extracted correctly. Assuming it's sent in the request body.
     const slug = req.params.slug;
-    console.log("**slug : " , slug);
+    // console.log("**slug : " , slug);
 
     if (!slug) {
         return res.status(400).send("Bad Request: Missing _id");
     }
-
     try {
         const result = await Page.deleteOne({ slug: slug });
-
         if (result.deletedCount === 1) {
             console.log(`Page with slug: ${slug} was deleted.`);
-            // return res.status(200).send("Page successfully deleted");
             res.redirect('/admin/pages/');
         } else {
             console.log(`Page with slug: ${slug} was not found.`);
