@@ -1,9 +1,14 @@
-<%- include('./_layouts/header',{
-    heading: heading,
-    title : title,
-    content : content,
+<%- include('./_layouts/header', { 
+    heading: heading, 
+    title: title, 
+    content: content 
 }) %>
+<div class="ctnt">
+    <div class="cc" style="align-items: center; margin-left: 30px;max-width: 300px;">
+        <h3>CONTENT</h3>
+        <%- content %>
+    </div>
+</div>
 
-<%- content %>
 
 <%- include('./_layouts/footer') %>

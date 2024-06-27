@@ -47,6 +47,18 @@ async function setGlobalPages() {
 }
 setGlobalPages();
 
+//Global variable for Categories---
+app.locals.globalCategories = null;
+const category = require("./models/category");
+async function setGlobalCategories() {
+    try { 
+        app.locals.globalCategories = await category.find();
+    } catch (err) {
+        console.error("Error fetching global categories: ", err);
+    }
+}
+setGlobalCategories();
+
 
 
 // Serve static files from the "public" directory
@@ -120,6 +132,7 @@ const pages = require('./routes/pages.js')
 const adminPages = require('./routes/admin_pages.js');
 const adminCategories = require('./routes/admin_categories.js');
 const adminProducts = require('./routes/admin_products.js');
+const Category = require('./models/category');
 
 app.use('/admin/pages', adminPages);
 app.use('/admin/categories', adminCategories);
