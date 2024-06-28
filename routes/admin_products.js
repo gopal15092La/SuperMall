@@ -106,12 +106,12 @@ router.post("/add-product", async (req, res) => {
                     await mkdirp('public/product_images/' + newProduct._id);
                     await mkdirp('public/product_images/' + newProduct._id + '/gallery');
                     await mkdirp('public/product_images/' + newProduct._id + '/gallery/thumbs');
-                    console.log("newProduct._id:", newProduct._id);
-                    console.log("imageFile:", imageFile);
+                    // console.log("newProduct._id:", newProduct._id);
+                    // console.log("imageFile:", imageFile);
                     if(imageFile != ""){
                         var productImage = req.files.image;
                         var uploadPath = 'public/product_images/' + newProduct._id + '/' + imageFile;
-                        console.log("path : ", path);
+                        // console.log("path : ", path);
                         try {
                             await fs.ensureDir(path.dirname(uploadPath));
                             await productImage.mv(uploadPath);

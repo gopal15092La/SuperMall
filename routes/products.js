@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-//Get Page model
-const page = require("../models/page");
+//Get Product model
+const product = require("../models/product");
 
 
-//Get Home Page
+//Get All producst
 router.get('/', async (req, res) => {
-    var slug = "home";
     try{
-        var p = await page.findOne({slug: slug});
-        res.render('index',{
-            heading:"supermall",
-            title:  p.title,
-            content: p.content,
+        var p = await product.find();
+        if(!p){
+            res.status(404).send("Server error");
+        }
+        res.render('all_products',{
+            heading:"All Products",
+            products : p,
         });
     }catch(err){
         return console.log("err :", err);
@@ -27,6 +28,7 @@ router.get('/:slug', async (req, res) => {
     try{
         var p = await page.findOne({slug: slug});
         if(!p){
+            console.log("null page");
             res.redirect("/");
         }else{
             res.render('index',{

@@ -1,35 +1,31 @@
-const express = require('express');
-const path = require('path');
-const mongoose = require('mongoose');
-const config = require('./config/database');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const expressValidator = require('express-validator');
+const express = require("express");
+const path = require("path");
+const mongoose = require("mongoose");
+const config = require("./config/database");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const expressValidator = require("express-validator");
 // const flash = require('express-flash');
-const fileUpload = require('express-fileupload');
+const fileUpload = require("express-fileupload");
 
 //connect to db
 //kosish
 mongoose.connect(config.database);
 const db = mongoose.connection;
-db.on('error',console.error.bind(console, 'connections error:'));
-db.once('open', () => {
-    console.log('Connected to MongoDB');
+db.on("error", console.error.bind(console, "connections error:"));
+db.once("open", () => {
+  console.log("Connected to MongoDB");
 });
 
- 
 //init app
 const app = express();
 
 //view engine setup
-app.set('views', path.join(__dirname,'views'));
-app.set('view engine', 'ejs');
-
-
-
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 //set public folder
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 //set Global Errors variable
 app.locals.errors = null;
@@ -39,11 +35,11 @@ app.locals.success = null;
 app.locals.globalPages = null;
 const page = require("./models/page");
 async function setGlobalPages() {
-    try { 
-        app.locals.globalPages = await page.find();
-    } catch (err) {
-        console.error("Error fetching global pages: ", err);
-    }
+  try {
+    app.locals.globalPages = await page.find();
+  } catch (err) {
+    console.error("Error fetching global pages: ", err);
+  }
 }
 setGlobalPages();
 
@@ -51,113 +47,102 @@ setGlobalPages();
 app.locals.globalCategories = null;
 const category = require("./models/category");
 async function setGlobalCategories() {
-    try { 
-        app.locals.globalCategories = await category.find();
-    } catch (err) {
-        console.error("Error fetching global categories: ", err);
-    }
+  try {
+    app.locals.globalCategories = await category.find();
+  } catch (err) {
+    console.error("Error fetching global categories: ", err);
+  }
 }
 setGlobalCategories();
 
-
-
 // Serve static files from the "public" directory
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 //Express fileUpload middleware
 app.use(fileUpload());
 
-
-//Body-Parser middleware      
-app.use(bodyParser.urlencoded({extended:false}));
+//Body-Parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
 
 //parse application/json
 app.use(bodyParser.json());
 
 //Express Session middleware
-app.use(session({
-    secret: 'keyboard cat',
+app.use(
+  session({
+    secret: "keyboard cat",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
-  }))
-
+    cookie: { secure: true },
+  })
+);
 
 //Express Validator middleware
-app.use(expressValidator({
-    errorFormatter: function(param,msg, value){
-        var namespace = param.split('.')
-        , root = namespace.shift()
-        , formParam = root;
+app.use(
+  expressValidator({
+    errorFormatter: function (param, msg, value) {
+      var namespace = param.split("."),
+        root = namespace.shift(),
+        formParam = root;
 
-    while(namespace.length){
-        formParam += '[' + namespace.shift() + ']';
-    }
-    return {
-        param : formParam,
-        msg : msg,
-        value : value
-    };
-  },
-  customValidators: {
-    isImage: function(value, filename) {
-      var extension = (path.extname(filename)).toLowerCase();
-      switch(extension) {
-        case '.jpg':
-            return '.jpg';
-        case '.jpeg':
-            return '.jpeg';
-        case '.png':
-            return '.png';
-        case '':
-            return '.jpg';
-        default:
-            return false;
+      while (namespace.length) {
+        formParam += "[" + namespace.shift() + "]";
       }
-    }
-  }
-}));
+      return {
+        param: formParam,
+        msg: msg,
+        value: value,
+      };
+    },
+    customValidators: {
+      isImage: function (value, filename) {
+        var extension = path.extname(filename).toLowerCase();
+        switch (extension) {
+          case ".jpg":
+            return ".jpg";
+          case ".jpeg":
+            return ".jpeg";
+          case ".png":
+            return ".png";
+          case "":
+            return ".jpg";
+          default:
+            return false;
+        }
+      },
+    },
+  })
+);
 // Middleware to parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
 //Express messages middleware
-app.use(require('connect-flash')());
+app.use(require("connect-flash")());
 app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res);
+  res.locals.messages = require("express-messages")(req, res);
   next();
 });
 
 //set routes
-const pages = require('./routes/pages.js')
-const adminPages = require('./routes/admin_pages.js');
-const adminCategories = require('./routes/admin_categories.js');
-const adminProducts = require('./routes/admin_products.js');
-const Category = require('./models/category');
+const pages = require("./routes/pages.js");
+const products = require('./routes/products.js');
+const adminPages = require("./routes/admin_pages.js");
+const adminCategories = require("./routes/admin_categories.js");
+const adminProducts = require("./routes/admin_products.js");
+const Category = require("./models/category");
+const Product = require("./models/product.js");
 
-app.use('/admin/pages', adminPages);
-app.use('/admin/categories', adminCategories);
-app.use('/admin/products', adminProducts);
-app.use('/', pages);
-
-
-
+app.use("/admin/pages", adminPages);
+app.use("/admin/categories", adminCategories);
+app.use("/admin/products", adminProducts);
+app.use("/products", products);
+app.use("/", pages);
 
 //start the server
 const port = 3000;
-app.listen(port, () =>{
-    console.log(`server listening on port ${port}`);
+app.listen(port, () => {
+  console.log(`server listening on port ${port}`);
 });
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 PS C:\Users\Dell\Desktop\SuperMall> git push -u origin main
