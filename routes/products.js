@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs-extra');
 
 //Get Product model
 const product = require("../models/product");
@@ -43,6 +44,38 @@ router.get('/:category', async (req, res) => {
     }
     
 });
+
+
+//Get  products details By Category
+router.get('/:category/:product', async (req, res) => {
+    var galleryImages = null;
+    
+    try{
+        var p = await product.findOne({slug : req.params.product});
+        var galleryDir = 'public/product_images/' + p._id + '/gallery';
+
+        fs.readdir(galleryDir, (err , files) => {
+            if(err){
+                console.log("error at fs-readir :" , err);
+            }else{
+                galleryImages = files;
+
+                res.render('product', {
+                    heading:"",
+                    title : p.title,
+                    product : p,
+                    galleryImages: galleryImages
+                })
+            }
+        });
+    } catch( err ){
+        console.log("error at category/product route .", err );
+    }
+    
+});
+
+
+
 
 
 module.exports = router;

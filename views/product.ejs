@@ -1,0 +1,40 @@
+<%- include('./_layouts/header', {
+    heading: heading, 
+    title: title, 
+    poduct : product,
+    galleryImages: galleryImages, 
+}) %>
+<style>
+    .row{
+        display: inline-block;
+        margin-left: 270px;
+        justify-content: left;
+        text-align: center;
+        align-items: center;
+    }
+    b.spi{
+        max-width: 300px;
+    }
+    .b{
+        display: grid;
+        padding-left: 100px;
+        font-size: 30px;
+    }
+</style>
+<div class="row">
+    <h1 class="page-header"><%= product.title %> </h1>
+
+    <div class="b">
+        <img class="spi" src="/product_images/<%= product._id %>/<%= product.image %>" alt="">
+        <br>
+    </div>
+    <div class="b" style="text-align: center;">
+        <p style="padding-left: 0%;">Description    :   <b><%= product.desc %></b></p>
+        <p>$<%= parseFloat(product.price).toFixed(2) %></p>
+        <p><a href="/cart/add/<%= product.slug %>"> Add to cart</a></p>
+    </div>
+
+</div>
+
+
+<%- include('./_layouts/footer') %>
