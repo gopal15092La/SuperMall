@@ -89,7 +89,17 @@
             <%}%>
         <%}); %>
         <% }%>
-      </ul>
+          <li>
+            <a href="/cart/checkout">My Cart(
+              <% if(typeof cart != "undefined") {%>
+                  <%= cart.length %>
+              <% } else{%>
+                  0
+              <% }  %>
+              )</a>
+          </li>
+      
+    </ul>
     </div>
   </nav>
   <div style="display: inline-block;">
