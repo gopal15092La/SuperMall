@@ -89,16 +89,15 @@
             <%}%>
         <%}); %>
         <% }%>
-          <li>
-            <a href="/cart/checkout">My Cart(
-              <% if(typeof cart != "undefined") {%>
-                  <%= cart.length %>
-              <% } else{%>
+        <li>
+          <a href="/cart/checkout">My Cart(
+              <% if (typeof cart !== 'undefined' && cart.length > 0) { %>
+                  <%= cart.reduce((total, item) => total + item.qty, 0) %>
+              <% } else { %>
                   0
-              <% }  %>
-              )</a>
-          </li>
-      
+              <% } %>
+          )</a>
+      </li>
     </ul>
     </div>
   </nav>
