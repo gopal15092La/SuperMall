@@ -12,9 +12,6 @@
         text-align: center;
         align-items: center;
     }
-    b.spi{
-        max-width: 300px;
-    }
     .b{
         display: grid;
         padding-left: 100px;
@@ -25,7 +22,7 @@
     <h1 class="page-header"><%= product.title %> </h1>
 
     <div class="b">
-        <img class="spi" src="/product_images/<%= product._id %>/<%= product.image %>" alt="">
+        <img class="spi" src="/product_images/<%= product._id %>/<%= product.image %>" alt="" style="max-width: 250px; align-items: center;">
         <br>
     </div>
     <div class="b" style="text-align: center;">
