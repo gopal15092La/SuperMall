@@ -1,0 +1,61 @@
+
+
+
+<%- include('./_layouts/header', {  
+    heading: heading,
+    title: title, 
+    cart: cart, 
+}) %>
+
+<style>
+    .cartStyle{
+        margin-left: 370px;
+    }
+    .table-striped {
+        box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-striped th,
+    .table-striped td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
+
+<div class = "cartStyle">
+    <h1 style="text-align: center;">My Cart</h1>
+    <% if (cart) { %>
+        <table class="table table-striped">
+
+            <tr style="text-align: center;">
+                <th>Image</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th></th>
+                <th>Total Amount</th>
+            </tr>
+
+            <% cart.forEach((product) => {%>
+                <% var sub = parseFloat(product.qty * product.price).toFixed(2) %>
+                <tr style="text-align: center;">
+                    <td ><img src="<%= product.image %>" alt="missing image" style="height: 100px; width: 100px;"></td>
+                    <td ><%= product.title %></td>
+                    <td ><%= product.price %></td>
+                    <td ><%= product.qty %></td>
+                    <td>
+                        <a href="/cart/update/<%= product.title %>?action=add">+</a>&nbsp;
+                        <a href="/cart/update/<%= product.title %>?action=remove">-</a>&nbsp;
+                        <a href="/cart/update/<%= product.title %>?action=clear">Clear</a>&nbsp;
+                    </td>
+                    <td >$<%= sub %></td>
+                </tr>
+            <% }); %>
+        </table>
+    <% } else{%>
+        <h3>Your cart is empty.</h3>
+    <% } %>
+</div>
+
+
+<%- include('./_layouts/footer') %>

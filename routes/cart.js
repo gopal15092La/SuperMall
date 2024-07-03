@@ -5,7 +5,6 @@ const session = require("express-session");
 //Get product model
 const product = require("../models/product");
 
-
 //Get cart
 router.get('/add/:product', async function (req, res) {
     var slug = req.params.product;
@@ -52,49 +51,55 @@ router.get('/add/:product', async function (req, res) {
 
 });
 
-router.get('/add/:product', async function (req, res) {
-    var slug = req.params.product;
-    try {
-        var p = await product.findOne({slug: slug});
+// router.get('/add/:product', async function (req, res) {
+//     var slug = req.params.product;
+//     try {
+//         var p = await product.findOne({slug: slug});
 
-        if (!p) {
-            // Handle case where product with the given slug doesn't exist
-            throw new Error('Product not found');
-        }
+//         if (!p) {
+//             // Handle case where product with the given slug doesn't exist
+//             throw new Error('Product not found');
+//         }
 
-        if (!req.session.cart) {
-            req.session.cart = [];
-        }
+//         if (!req.session.cart) {
+//             req.session.cart = [];
+//         }
 
-        // Check if the product is already in the cart
-        var foundIndex = req.session.cart.findIndex(item => item.title === slug);
+//         // Check if the product is already in the cart
+//         var foundIndex = req.session.cart.findIndex(item => item.title === slug);
 
-        if (foundIndex !== -1) {
-            // If found, increase the quantity
-            req.session.cart[foundIndex].qty++;
-        } else {
-            // If not found, add it to the cart
-            req.session.cart.push({
-                title: slug,
-                qty: 1,
-                price: parseFloat(p.price).toFixed(2),
-                image: '/product_images/' + p._id + '/' + p.image
-            });
-        }
+//         if (foundIndex !== -1) {
+//             // If found, increase the quantity
+//             req.session.cart[foundIndex].qty++;
+//         } else {
+//             // If not found, add it to the cart
+//             req.session.cart.push({
+//                 title: slug,
+//                 qty: 1,
+//                 price: parseFloat(p.price).toFixed(2),
+//                 image: '/product_images/' + p._id + '/' + p.image
+//             });
+//         }
 
-        console.log(req.session.cart);
-        req.flash('success', 'Product added!');
-        res.redirect('back');
+//         console.log(req.session.cart);
+//         req.flash('success', 'Product added!');
+//         res.redirect('back');
 
-    } catch(err) {
-        console.log("Error adding product to cart:\n", err);
-        req.flash('error', 'Failed to add product to cart');
-        res.redirect('back');
-    }
+//     } catch(err) {
+//         console.log("Error adding product to cart:\n", err);
+//         req.flash('error', 'Failed to add product to cart');
+//         res.redirect('back');
+//     }
+// });
+
+//GET checkout page
+
+router.get('/checkout', async(req, res) => {
+    res.render('checkout',{
+        heading: "",
+        title: 'checkout',
+        cart: req.session.cart
+    });
 });
-
-
-
-
 
 module.exports = router;
