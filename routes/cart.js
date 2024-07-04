@@ -152,6 +152,13 @@ router.get('/clear', async(req, res) => {
         delete req.session.cart;
         res.redirect('/cart/checkout');
 });
+/*
+    Get buy now
+ */
+router.get('/clear', async(req, res) => {
+        delete req.session.cart;
+        res.sendStatus(200);
+});
 
 
 module.exports = router;

@@ -26,4 +26,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
+    document.querySelectorAll('a.buynow').forEach(element => {
+        element.addEventListener('click', (event) => {
+            event.preventDefault();
+            $.get('/cart/buynow', function(){
+                $('form.pp input[type=image]').click();
+                $('.ajaxbg').show();
+            });
+        });
+    });
+    
 });
