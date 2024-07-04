@@ -145,6 +145,13 @@ router.get('/update/:product', function (req, res) {
     res.redirect('/cart/checkout');
 
 });
+/*
+    Get clear cart
+ */
+router.get('/clear', async(req, res) => {
+        delete req.session.cart;
+        res.redirect('/cart/checkout');
+});
 
 
 module.exports = router;

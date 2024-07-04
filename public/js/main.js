@@ -19,4 +19,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
+    document.querySelectorAll('a.clearCart').forEach(element => {
+        element.addEventListener('click', (event) => {
+            if (!confirm('Confirm clear cart')) {
+                event.preventDefault();
+            }
+        });
+    });
 });
