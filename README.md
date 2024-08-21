@@ -1,5 +1,5 @@
 # **Supermall - E-Commerce Website**
-<img alt="Demo" src="./readme/login.png" />
+<img alt="Demo" src="readme/logIn.png" />
 
 
 
