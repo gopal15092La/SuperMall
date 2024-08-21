@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
-
+const auth = require('../config/auth');
+const isAdmin = auth.isAdmin;
 // Get Category model
 const Category = require("../models/category");
 const database = require("../config/database");
 
 //GET category index
-router.get("/",  (req, res) => {
+router.get("/",isAdmin , (req, res) => {
 
     Category.find()
         .then((categories) => {
@@ -22,7 +23,7 @@ router.get("/",  (req, res) => {
 });
 
 //GET add-category
-router.get("/add-category", (req, res) => {
+router.get("/add-category",isAdmin, (req, res) => {
     var title = "";
     res.render("admin/add_category", {
         title: title,
@@ -83,7 +84,7 @@ router.post("/add-category", (req, res) => {
 });
 
 // //GET edit category
-router.get('/edit-category/:id', async (req, res) => {
+router.get('/edit-category/:id', isAdmin, async (req, res) => {
     // console.log("at edit-catagory GET PAGE &&&&@#OIU@)U!@)");
     const id = req.params.id;
     // console.log("id :", id);
@@ -159,7 +160,7 @@ router.post("/edit-category/:id", (req, res) => {
 
 
 //GET Delete Page
-router.get('/delete-category/:id', async (req, res) => {
+router.get('/delete-category/:id',isAdmin,  async (req, res) => {
     console.log("on delete section ....");
 
     const id = req.params.id;

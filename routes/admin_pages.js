@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-
+const auth = require('../config/auth');
+const isAdmin = auth.isAdmin;
 // Get Page model
 const Page = require("../models/page");
 
 //GET pages index
-router.get("/", async (req, res) => {
+router.get("/", isAdmin, async (req, res) => {
     try {
         const pages = await Page.find({}).sort({ sorting: 1 });
         res.render("admin/pages", {
@@ -22,7 +23,7 @@ router.get("/", async (req, res) => {
 
 
 //GET add page
-router.get("/add-page", (req, res) => {
+router.get("/add-page", isAdmin, (req, res) => {
     var title = "";
     var slug = ""; // Define slug here
     var content = "";
@@ -99,7 +100,7 @@ router.post("/add-page", (req, res) => {
 
 
 //GET edit page
-router.get('/edit-page/:slug', async (req, res) => {
+router.get('/edit-page/:slug', isAdmin,async (req, res) => {
     const title = req.params.title;
     const slug = req.params.slug;
     const content = req.params.content;
@@ -186,7 +187,7 @@ router.post("/edit-page/:slug", (req, res) => {
 
 
 //GET Delete Page
-router.get('/delete-page/:slug', async (req, res) => {
+router.get('/delete-page/:slug', isAdmin,async (req, res) => {
     // Ensure the id is extracted correctly. Assuming it's sent in the request body.
     const slug = req.params.slug;
     // console.log("**slug : " , slug);

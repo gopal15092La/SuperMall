@@ -4,6 +4,11 @@ const  { mkdirp } = require('mkdirp');
 const path = require('path');
 const fs = require('fs-extra');
 const resizeImg = require('resize-img');
+
+const auth = require('../config/auth');
+const isAdmin = auth.isAdmin;
+
+
 const fileUpload = require('express-fileupload');
 // app.use(fileUpload());
 // Get Product model
@@ -12,7 +17,7 @@ const Product = require("../models/product");
 const Category = require("../models/category");
 
 //GET Product index
-router.get("/", async(req, res) => {
+router.get("/", isAdmin, async(req, res) => {
     try {
         let products = await Product.find();
         let count = products.length;
@@ -26,7 +31,7 @@ router.get("/", async(req, res) => {
 });
 
 //GET add product
-router.get("/add-product", async(req, res) => {
+router.get("/add-product",  isAdmin, async(req, res) => {
     var title = "";
     var desc = "";
     var price = "";
@@ -140,7 +145,7 @@ function stripHtmlTags(str) {
 
 
 //GET edit product
-router.get('/edit-product/:id', async (req, res) => {
+router.get('/edit-product/:id', isAdmin ,async (req, res) => {
 
     var errors ; 
     
@@ -243,7 +248,7 @@ router.post("/edit-product/:id", async (req, res) => {
 
 
 //GET Delete Page
-router.get('/delete-product/:id', async (req, res) => {
+router.get('/delete-product/:id', isAdmin ,async (req, res) => {
     const id = req.params.id;
     if (!id) {
         return res.status(400).send("Bad Request: Missing _id");

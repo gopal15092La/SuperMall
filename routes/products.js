@@ -49,6 +49,8 @@ router.get('/:category', async (req, res) => {
 //Get  products details By Category
 router.get('/:category/:product', async (req, res) => {
     var galleryImages = null;
+
+    var loggedIn = (req.isAuthenticated()) ? true : false;
     
     try{
         var p = await product.findOne({slug : req.params.product});
@@ -64,7 +66,8 @@ router.get('/:category/:product', async (req, res) => {
                     heading:"",
                     title : p.title,
                     product : p,
-                    galleryImages: galleryImages
+                    galleryImages: galleryImages,
+                    loggedIn: loggedIn
                 })
             }
         });
