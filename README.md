@@ -8,7 +8,7 @@
   <img alt="Cart" src="readme/cart.png" width="400" style="margin: 10px;"/>
 </div>
 
-
+####
 
 **Supermall** is a fully-featured e-commerce web application built with a focus on user experience, scalability, and performance. This platform allows users to browse, search, and purchase a wide range of products with ease. The application is designed to handle multiple users, secure transactions, and seamless integration with payment gateways.
 
