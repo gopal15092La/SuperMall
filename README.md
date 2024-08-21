@@ -2,7 +2,7 @@
 ## **Demo**
 
 <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
-  <img alt="Demo" src="readme/logIn.png" width="200" style="margin: 10px;"/>
+  <img alt="Demo" src="readme/logIn.png" width="300" style="margin: 10px;"/>
   <img alt="Admin Categories" src="readme/adminCategories.png" width="300" style="margin: 10px;"/>
   <img alt="Admin Product" src="readme/adminProduct.png" width="300" style="margin: 10px;"/>
   <img alt="Cart" src="readme/cart.png" width="300" style="margin: 10px;"/>
